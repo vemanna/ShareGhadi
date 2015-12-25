@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/home"
+            android:checked="false"
+            android:icon="@drawable/ic_inbox_black"
+            android:title="@string/home" />
+
+        <item
+            android:id="@+id/schedule_ride"
+            android:checked="false"
+            android:icon="@drawable/ic_star_black"
+            android:title="@string/schedule_ride" />
+
+        <item
+            android:id="@+id/payment"
+            android:checked="false"
+            android:icon="@drawable/ic_send_black"
+            android:title="@string/payment" />
+
+        <item
+            android:id="@+id/verification"
+            android:checked="false"
+            android:icon="@drawable/ic_drafts_black"
+            android:title="@string/verification" />
+
+        <item
+            android:id="@+id/share"
+            android:checked="false"
+            android:icon="@drawable/ic_email_black"
+            android:title="@string/share" />
+        <item
+            android:id="@+id/settings"
+            android:checked="false"
+            android:icon="@drawable/ic_delete_black"
+            android:title="@string/settings" />
+        <item
+            android:id="@+id/faq"
+            android:checked="false"
+            android:icon="@drawable/ic_error_black"
+            android:title="@string/faq" />
+
+    </group>
+</menu>

@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">ShareGhadi</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_fullscreen">" "</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_login">LOGIN</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">EMAIL</string>
+    <string name="prompt_password">PASSWORD</string>
+    <string name="action_sign_in_short">SIGN IN</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
+    </string>
+    <string name="title_activity_registration">REGISTRATION</string>
+    <string name="prompt_firstname">FIRST NAME</string>
+    <string name="prompt_secondname">SECOND NAME</string>
+    <string name="prompt_phone">PHONE</string>
+
+    <!-- Strings related to MainActiivty -->
+    <string name="home">Home</string>
+    <string name="schedule_ride">Schedule Ride</string>
+    <string name="payment">Payment</string>
+    <string name="verification">Verification</string>
+    <string name="share">Share</string>
+    <string name="settings">Settings</string>
+    <string name="faq">FAQ</string>
+
+
+    <string name="trash_string">Trash</string>
+    <string name="all_mail_string">All mails</string>
+    <string name="spam_string">Spams</string>
+    <string name="closeDrawer">Navigation View</string>
+    <string name="openDrawer">Navigation View Closed</string>
+
+    <!-- Facebook app id -->
+    <string name="facebook_app_id">1675651616015824</string>
+</resources>
