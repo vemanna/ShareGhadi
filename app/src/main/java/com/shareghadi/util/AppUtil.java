@@ -36,7 +36,7 @@ public class AppUtil {
             Date d2 = format.parse(end);
             long difference = d2.getTime() - d1.getTime();
             long differenceBack = difference / 1000;
-            LogUtils.LOGD("Difference : ", start + ":" + end + ":" + String.valueOf(differenceBack));
+            LogUtil.LOGD("Difference : ", start + ":" + end + ":" + String.valueOf(differenceBack));
 
             long hours = differenceBack / 3600;
             long mints = (differenceBack % 3600) / 60;

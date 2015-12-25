@@ -1,7 +1,9 @@
-package com.shareghadi;
+package com.shareghadi.views;
 
 import android.os.Bundle;
 import android.view.View;
+
+import com.shareghadi.R;
 
 public class StartActivity extends BaseActivity implements View.OnClickListener {
 

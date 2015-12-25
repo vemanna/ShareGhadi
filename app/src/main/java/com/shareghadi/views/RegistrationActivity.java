@@ -1,6 +1,8 @@
-package com.shareghadi;
+package com.shareghadi.views;
 
 import android.os.Bundle;
+
+import com.shareghadi.R;
 
 public class RegistrationActivity extends BaseActivity {
 

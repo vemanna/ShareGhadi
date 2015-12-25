@@ -3,45 +3,75 @@ package com.shareghadi.views;
 /**
  * Created by BVN on 12/24/2015.
  */
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.shareghadi.BaseActivity;
 import com.shareghadi.R;
+import com.shareghadi.database.SQLiteDAO;
+import com.shareghadi.models.SignUp;
+import com.shareghadi.util.DLManager;
+import com.shareghadi.util.LogUtil;
+
+import java.io.File;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.shareghadi.util.LogUtil.LOGD;
 
 public class MainActivity extends BaseActivity {
 
+    private static final String TAG = LogUtil.makeLogTag(MainActivity.class);
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+
+    private CircleImageView circleImageView;
+    private TextView tv_userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initializing Toolbar and setting it as the actionbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        initView();
 
-        //Initializing NavigationView
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        SQLiteDAO sqLiteDAO = new SQLiteDAO(getApplication());
+        sqLiteDAO.open();
+        List<SignUp> signupList = sqLiteDAO.getSignUpDetails();
+        SignUp signup = signupList.get(0);
+        sqLiteDAO.close();
+        LOGD(TAG, "" + signup.getProfileImageURL());
+
+        File imgFile = new  File("/storage/sdcard0/Android/data/com.shareghadi/files/"+ signup.getFirstName()+".jpg");
+        LOGD(TAG, "" + imgFile.exists());
+        if (imgFile.exists()) {
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            circleImageView.setImageBitmap(myBitmap);
+        }else{
+            DLManager.useDownloadManager(signup.getProfileImageURL(), signup.getFirstName(), MainActivity.this);
+            File imgFile1 = new  File("/storage/sdcard0/Android/data/com.shareghadi/files/"+ signup.getFirstName()+".jpg");
+            LOGD(TAG, "" + imgFile.exists());
+            if (imgFile1.exists()) {
+                Bitmap myBitmap1 = BitmapFactory.decodeFile(imgFile1.getAbsolutePath());
+                circleImageView.setImageBitmap(myBitmap1);
+            }
+
+        }
+
+        tv_userName.setText(signup.getFirstName() +" "+ signup.getLastName());
 
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -120,12 +150,22 @@ public class MainActivity extends BaseActivity {
         //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
 
+    }
 
+    private void initView() {
 
+        // Initializing Toolbar and setting it as the actionbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-
+        //Initializing NavigationView
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        View headerView =  navigationView.inflateHeaderView(R.layout.header_nav);
+        circleImageView = (CircleImageView)headerView.findViewById(R.id.profile_image);
+        tv_userName = (TextView)headerView.findViewById(R.id.tv_userName);
 
     }
+
 
    /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -15,17 +15,25 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static com.shareghadi.util.LogUtil.LOGD;
+import static com.shareghadi.util.LogUtil.makeLogTag;
 
 /**
  * Created by BVN on 12/24/2015.
  */
 public class ImageUtil {
+
+    private static FileOutputStream fos;
 
     private static final String TAG = makeLogTag(ImageUtil.class);
 
@@ -334,4 +342,33 @@ public class ImageUtil {
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
+
+
+    //Saving an image
+    public static void saveImage(Bitmap bmp, String name, Context c) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        File file = new File(Environment.getExternalStorageDirectory()
+                + File.separator + name + ".jpg");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            fos.write(bytes.toByteArray());
+            fos.close();
+            Toast.makeText(c, "Image saved", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

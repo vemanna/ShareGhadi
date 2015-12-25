@@ -11,6 +11,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.shareghadi.models.SignUp;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class SQLiteDAO {
 
     private static SQLiteDatabase database;
@@ -36,34 +41,36 @@ public class SQLiteDAO {
         sqliteDB.close();
     }
 
-   /* public long insertRegistrationDetails(Registration registration) {
-
+    public long insertSignUpDetails(SignUp signUp) {
         long isUpdate = 0;
         ContentValues cv = new ContentValues();
-        cv.put(SQliteHelper.FIRST_NAME, registration.getFirstName());
-        cv.put(SQliteHelper.LAST_NAME, registration.getLastName());
-        cv.put(SQliteHelper.EMAIL, registration.getEmail());
-        cv.put(SQliteHelper.PASSWORD, registration.getPassword());
-        cv.put(SQliteHelper.CONFIRM_PASSWORD, registration.getConfirmPassword());
+        cv.put(SQLiteHelper.FIRST_NAME, signUp.getFirstName());
+        cv.put(SQLiteHelper.LAST_NAME, signUp.getLastName());
+        cv.put(SQLiteHelper.EMAIL, signUp.getEmail());
+        cv.put(SQLiteHelper.PROFILE_IMAGE_URL, signUp.getProfileImageURL());
+        cv.put(SQLiteHelper.COVER_IMAGE_URL, signUp.getProfileImageURL());
 
-
-        isUpdate = database.insert(SQliteHelper.TABLE_REGISTRATION, null, cv);
+        isUpdate = database.insert(SQLiteHelper.TABLE_SIGNUP, null, cv);
 
         return isUpdate;
-    }*/
+    }
 
-  /*  public String login(String email){
+    public List<SignUp> getSignUpDetails() {
 
-        Cursor cursor = database.query(SQLiteHelper.TABLE_REGISTRATION, null,SQLiteHelper.EMAIL+"=?",
-                new String[] { email }, null, null, null);
-        if (cursor.getCount() < 1) {
-            cursor.close();
-            return "NOT EXIST";
+        List<SignUp> signUpList = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + SQLiteHelper.TABLE_SIGNUP;
+        cursor = database.rawQuery(selectQuery, null);
+        while (cursor.moveToNext()) {
+
+            SignUp signUp = new SignUp();
+            signUp.setFirstName(cursor.getString(cursor.getColumnIndex(SQLiteHelper.FIRST_NAME)));
+            signUp.setLastName(cursor.getString(cursor.getColumnIndex(SQLiteHelper.LAST_NAME)));
+            signUp.setEmail(cursor.getString(cursor.getColumnIndex(SQLiteHelper.EMAIL)));
+            signUp.setProfileImageURL(cursor.getString(cursor.getColumnIndex(SQLiteHelper.PROFILE_IMAGE_URL)));
+            signUp.setCoverImageURL(cursor.getString(cursor.getColumnIndex(SQLiteHelper.COVER_IMAGE_URL)));
+            signUpList.add(signUp);
         }
-        cursor.moveToFirst();
-        String password = cursor.getString(cursor.getColumnIndex(SQLiteHelper.PASSWORD));
         cursor.close();
-        return password;
-
-    }*/
+        return signUpList;
+    }
 }
