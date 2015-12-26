@@ -42,4 +42,5 @@
 
     <!-- Facebook app id -->
     <string name="facebook_app_id">1675651616015824</string>
+    <string name="title_activity_maps">Ride</string>
 </resources>

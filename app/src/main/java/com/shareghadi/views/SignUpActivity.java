@@ -14,60 +14,43 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.shareghadi.R;
-import com.shareghadi.database.SQLiteDAO;
-import com.shareghadi.database.SQLiteDB;
-import com.shareghadi.models.SignUp;
-import com.shareghadi.util.LogUtil;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
-
-import static com.shareghadi.util.LogUtil.LOGD;
-
 public class SignUpActivity extends BaseActivity {
 
-    private static final String TAG = LogUtil.makeLogTag(SignUpActivity.class);
     private LoginButton loginButton;
     private CallbackManager callbackManager;;
     ProfileTracker profileTracker;
-
-    SignUp signup;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        setContentView(R.layout.activity_signup);
 
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        setContentView(R.layout.activity_signup);
         loginButton = (LoginButton)findViewById(R.id.login_button);
+
+       /* loginButton.setReadPermissions("user_friends");
+        loginButton.setReadPermissions("public_profile");
+        loginButton.setReadPermissions("email");
+        loginButton.setReadPermissions("user_birthday");*/
 
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));
 
         callbackManager = CallbackManager.Factory.create();
 
-        signup = new SignUp();
-
-        /*profileTracker = new ProfileTracker() {
-            @Override
-            protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
-
-                signup.setProfileImageURL(String.valueOf(currentProfile.getProfilePictureUri(100, 100)));
-
-                LOGD(TAG, "First Name:" + currentProfile.getFirstName()
-                          + "Profile:" + currentProfile.getProfilePictureUri(40,40)
-                );
-            }
-        };*/
-
-
         // Callback registration
+
+
+       /* loginButton.setReadPermissions("user_friends");*/
+        /*loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));*/
+
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -76,38 +59,15 @@ public class SignUpActivity extends BaseActivity {
                         loginResult.getAccessToken(),
                         new GraphRequest.GraphJSONObjectCallback() {
                             @Override
-                            public void onCompleted(JSONObject object,GraphResponse response) {
-                                try {
-                                    LOGD(TAG, response+"");
-
-                                    JSONObject data = response.getJSONObject();
-                                    signup.setFirstName(data.getString("first_name"));
-                                    signup.setLastName(data.getString("last_name"));
-                                    signup.setEmail(data.getString("email"));
-                                    if (data.has("picture")) {
-                                        String profileImageUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
-                                        signup.setProfileImageURL(profileImageUrl);
-                                    }
-                                    if (data.has("cover")) {
-                                        String coverImageUrl = data.getJSONObject("cover").getString("source");
-                                        signup.setCoverImageURL(coverImageUrl);
-                                    }
-
-                                    //Inserting data
-                                    SQLiteDAO sqLiteDAO = new SQLiteDAO(getApplication());
-                                    sqLiteDAO.open();
-                                    sqLiteDAO.insertSignUpDetails(signup);
-                                    sqLiteDAO.close();
-
-                                    launchIntentFinish(getApplication(),MainActivity.class);
-                                }catch (JSONException e){
-
-                                }
-
+                            public void onCompleted(
+                                    JSONObject object,
+                                    GraphResponse response) {
+                                // Application code
+                                Log.e("GraphResponse", response.toString());
                             }
                         });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,first_name, last_name, email, gender, birthday, location ,cover,picture.type(large)");
+                parameters.putString("fields", "id,name,email,gender, birthday");
                 request.setParameters(parameters);
                 request.executeAsync();
 
@@ -236,7 +196,6 @@ public class SignUpActivity extends BaseActivity {
                /* info.setText("Login attempt failed.");*/
             }
         });
-
 
     }
     @Override
