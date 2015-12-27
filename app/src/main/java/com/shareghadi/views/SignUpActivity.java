@@ -6,7 +6,9 @@ package com.shareghadi.views;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -14,43 +16,44 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.shareghadi.R;
+import com.shareghadi.database.SQLiteDAO;
+import com.shareghadi.models.SignUp;
+import com.shareghadi.util.LogUtil;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
-public class SignUpActivity extends BaseActivity {
+import java.util.Collection;
 
+import static com.shareghadi.util.LogUtil.LOGD;
+
+public class SignUpActivity extends AppCompatActivity {
+
+    private static final String TAG = LogUtil.makeLogTag(SignUpActivity.class);
     private LoginButton loginButton;
     private CallbackManager callbackManager;;
-    ProfileTracker profileTracker;
+    private Button btn_login_with_fb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FacebookSdk.sdkInitialize(getApplicationContext());
-
+        callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_signup);
-        loginButton = (LoginButton)findViewById(R.id.login_button);
 
-       /* loginButton.setReadPermissions("user_friends");
-        loginButton.setReadPermissions("public_profile");
-        loginButton.setReadPermissions("email");
-        loginButton.setReadPermissions("user_birthday");*/
+
+        loginButton = (LoginButton)findViewById(R.id.login_button);
 
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));
 
         callbackManager = CallbackManager.Factory.create();
 
         // Callback registration
-
-
-       /* loginButton.setReadPermissions("user_friends");*/
-        /*loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));*/
-
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -59,131 +62,46 @@ public class SignUpActivity extends BaseActivity {
                         loginResult.getAccessToken(),
                         new GraphRequest.GraphJSONObjectCallback() {
                             @Override
-                            public void onCompleted(
-                                    JSONObject object,
-                                    GraphResponse response) {
-                                // Application code
-                                Log.e("GraphResponse", response.toString());
-                            }
-                        });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,gender, birthday");
-                request.setParameters(parameters);
-                request.executeAsync();
-
-
-              /*  info.setText(
-                        "User ID: "
-                        + loginResult.getAccessToken().getUserId()
-                        + "\n" +
-                        "Auth Token: "
-                        + loginResult.getAccessToken().getToken()
-
-                );*/
-
-                /*GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-
-                                Log.e("JSONObject ",""+object );
-                                Log.e("GraphResponse ",""+response );
+                            public void onCompleted(JSONObject object,GraphResponse response) {
                                 try {
-                                    Log.e("JSONObject ",""+ object.getString("name") );
-                                    Log.e("GraphResponse ",""+ object.getString("name") );
-                                  *//*  user_info.setText(
-                                            "Name: "
-                                                    + object.getString("name")
-                                                    + "\n" +
-                                                    "Email: "
-                                                    + object.getString("email")
-                                                    + "\n" +
-                                                    "Birthday: "
-                                                    + object.getString("birthday")
-                                                    + "\n" +
-                                                    "Gender:"
-                                                    + object.getString("gender")
+                                    LOGD(TAG, response+"");
+                                    JSONObject data = response.getJSONObject();
+                                    SignUp signup = new SignUp();
+                                    signup.setFirstName(data.getString("first_name"));
+                                    signup.setLastName(data.getString("last_name"));
+                                    signup.setEmail(data.getString("email"));
+                                    if (data.has("picture")) {
+                                        String profileImageUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+                                        signup.setProfileImageURL(profileImageUrl);
+                                    }
+                                    if (data.has("cover")) {
+                                        String coverImageUrl = data.getJSONObject("cover").getString("source");
+                                        signup.setCoverImageURL(coverImageUrl);
+                                    }
 
-                                    );*//*
+                                    //Inserting data
+                                    SQLiteDAO sqLiteDAO = new SQLiteDAO(getApplication());
+                                    sqLiteDAO.open();
+                                    sqLiteDAO.insertSignUpDetails(signup);
+                                    sqLiteDAO.close();
 
-                                    profileTracker = new ProfileTracker() {
-                                        @Override
-                                        protected void onCurrentProfileChanged(
-                                                Profile oldProfile,
-                                                Profile currentProfile) {
 
-                                            Log.e("oldProfile ",""+oldProfile );
-                                            Log.e("currentProfile ","First Name:"+currentProfile.getFirstName()
-                                                            +"Profile:"+currentProfile.getProfilePictureUri(40,40)
+                                }catch (JSONException e){
 
-                                            );
-                                            // App code
-                                        }
-                                    };
-
-                                } catch(JSONException ex) {
-                                    ex.printStackTrace();
                                 }
 
                             }
                         });
-
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,gender,birthday,link,email");
+                parameters.putString("fields", "id,first_name, last_name, email, gender, birthday, location ,cover,picture.type(large)");
                 request.setParameters(parameters);
-                request.executeAsync();*/
+                request.executeAsync();
 
-              /*  GraphRequestBatch batch = new GraphRequestBatch(
-                        GraphRequest.newMeRequest(
-                                loginResult.getAccessToken(),
-                                new GraphRequest.GraphJSONObjectCallback() {
-                                    @Override
-                                    public void onCompleted(
-                                            JSONObject jsonObject,
-                                            GraphResponse response) {
-                                        Log.e("JSONObject ",""+jsonObject );
-                                        Log.e("GraphResponse ",""+response );
-                                        // Application code for user
-                                    }
-                                }),
-                        GraphRequest.newMyFriendsRequest(
-                                loginResult.getAccessToken(),
-                                new GraphRequest.GraphJSONArrayCallback() {
-                                    @Override
-                                    public void onCompleted(
-                                            JSONArray jsonArray,
-                                            GraphResponse response) {
-                                        Log.e("JSONArray ",""+jsonArray );
-                                        Log.e("GraphResponse ",""+response );
-                                        // Application code for users friends
-                                    }
-                                })
-                );
-                batch.addCallback(new GraphRequestBatch.Callback() {
-                    @Override
-                    public void onBatchCompleted(GraphRequestBatch graphRequests) {
-                        // Application code for when the batch finishes
-                    }
-                });
-                batch.executeAsync();*/
-                /*Log.e("login AccessToken ",""+loginResult.getAccessToken() );
-                new GraphRequest(
-                        AccessToken.getCurrentAccessToken(),
-                        loginResult.getAccessToken().getUserId(),
-                        null,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
 
-                                Log.e(" AccessToken",""+ AccessToken.getCurrentAccessToken() );
-
-                                Log.e("GraphResponse ",""+response );
-
-
-                            }
-                        }
-                ).executeAsync();*/
             }
 
             @Override
@@ -197,9 +115,99 @@ public class SignUpActivity extends BaseActivity {
             }
         });
 
+
     }
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
+    /*private void initView() {
+        btn_login_with_fb = (Button)findViewById(R.id.btn_login_with_fb);
+        btn_login_with_fb.setOnClickListener(this);
+    }
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btn_login_with_fb:
+                signUpWithFaceBook();
+                break;
+        }
+    }
+
+    private void signUpWithFaceBook() {
+
+        Collection<String> permissions = Arrays.asList("public_profile, email, user_birthday, user_friends");
+        LoginManager.getInstance().logInWithReadPermissions(this, permissions);
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResults) {
+
+                        GraphRequest request = GraphRequest.newMeRequest(
+                                loginResults.getAccessToken(),
+                                new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(
+                                            JSONObject object,
+                                            GraphResponse response) {
+                                        // Application code
+                                        try {
+                                            LOGD(TAG, response+"");
+                                            JSONObject data = response.getJSONObject();
+                                            SignUp signup = new SignUp();
+                                            signup.setFirstName(data.getString("first_name"));
+                                            signup.setLastName(data.getString("last_name"));
+                                            signup.setEmail(data.getString("email"));
+                                            if (data.has("picture")) {
+                                                String profileImageUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+                                                signup.setProfileImageURL(profileImageUrl);
+                                                LOGD(TAG, profileImageUrl + "");
+                                            }
+                                            if (data.has("cover")) {
+                                                String coverImageUrl = data.getJSONObject("cover").getString("source");
+                                                signup.setCoverImageURL(coverImageUrl);
+                                            }
+
+                                            //Inserting data
+                                            SQLiteDAO sqLiteDAO = new SQLiteDAO(getApplication());
+                                            sqLiteDAO.open();
+                                            long insertRow = sqLiteDAO.insertSignUpDetails(signup);
+                                            LOGD(TAG, insertRow+"");
+                                            sqLiteDAO.close();
+                                            launchIntentFinish(getApplication(), MainActivity.class);
+
+                                        }catch (JSONException e){
+
+                                        }
+                                    }
+                                });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,first_name, last_name, email, gender, birthday, location ,cover,picture.type(large)");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+
+
+                    }
+                    @Override
+                    public void onCancel() {
+
+                        LOGD(TAG, "facebook login canceled");
+
+                    }
+
+
+                    @Override
+                    public void onError(FacebookException e) {
+
+
+                        LOGD(TAG, "facebook login failed error");
+
+                    }
+                });
+
+    }*/
 }
