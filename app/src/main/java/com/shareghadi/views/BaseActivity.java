@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +40,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private CircleImageView circleImageView;
     private TextView tv_userName;
-    private RelativeLayout headerLayout;
+    private ImageView coverImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,7 +194,8 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         View headerView =  navigationView.inflateHeaderView(R.layout.header_nav);
         circleImageView = (CircleImageView)headerView.findViewById(R.id.profile_image);
         tv_userName = (TextView)headerView.findViewById(R.id.tv_userName);
-        headerLayout = (RelativeLayout)headerView.findViewById(R.id.headerLayout);
+       coverImageView = (ImageView)headerView.findViewById(R.id.coverImageView);
+
 
     }
     private void setNavigationHeaderImageAndName(){
@@ -202,12 +204,16 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         sqLiteDAO.open();
         List<SignUp> signUpList = sqLiteDAO.getSignUpDetails();
         sqLiteDAO.close();
+        LOGD(TAG, "" + signUpList.size());
         if(signUpList != null && signUpList.size()>0){
             SignUp signup = signUpList.get(0);
             LOGD(TAG, "" + signup.getProfileImageURL());
             Picasso.with(this)
                     .load(signup.getProfileImageURL())
                     .into(circleImageView);
+            Picasso.with(this)
+                    .load(signup.getCoverImageURL())
+                    .into(coverImageView);
             tv_userName.setText(signup.getFirstName() +" "+ signup.getLastName());
         }
 

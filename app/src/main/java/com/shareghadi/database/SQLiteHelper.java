@@ -18,7 +18,7 @@ public class SQLiteHelper {
 
     public static String CREATE_REGISTRATION_TABLE() {
         String query = "CREATE TABLE " + TABLE_SIGNUP + " (" +
-                ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 FIRST_NAME + " TEXT," +
                 LAST_NAME + " TEXT," +
                 EMAIL + " TEXT," +

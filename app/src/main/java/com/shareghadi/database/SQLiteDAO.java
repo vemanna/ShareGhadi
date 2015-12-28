@@ -48,9 +48,11 @@ public class SQLiteDAO {
         cv.put(SQLiteHelper.LAST_NAME, signUp.getLastName());
         cv.put(SQLiteHelper.EMAIL, signUp.getEmail());
         cv.put(SQLiteHelper.PROFILE_IMAGE_URL, signUp.getProfileImageURL());
-        cv.put(SQLiteHelper.COVER_IMAGE_URL, signUp.getProfileImageURL());
+        cv.put(SQLiteHelper.COVER_IMAGE_URL, signUp.getCoverImageURL());
 
         isUpdate = database.insert(SQLiteHelper.TABLE_SIGNUP, null, cv);
+       /* isUpdate = database.insertWithOnConflict(SQLiteHelper.TABLE_SIGNUP, null,
+                cv, SQLiteDatabase.CONFLICT_IGNORE);*/
 
         return isUpdate;
     }
