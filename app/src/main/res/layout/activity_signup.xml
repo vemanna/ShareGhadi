@@ -11,6 +11,14 @@
         android:layout_centerInParent="true"
         android:padding="5dp"/>
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/g_sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/login_button"
+        android:layout_centerInParent="true"
+        android:padding="5dp" />
+
   <!--  <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
